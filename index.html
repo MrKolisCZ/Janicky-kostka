@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hod kostkou</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: sans-serif;
+    }
+
+    body {
+      text-align: center;
+      background: url("dcera.jpg") no-repeat center center fixed;
+      background-size: cover;
+      position: relative;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 0;
+    }
+
+    h1, .dice, button, p {
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  margin: 0;
+  font-size: 28px;
+  background: rgba(0, 0, 0, 0.4); /* volitelné poloprůhledné pozadí */
+  padding: 8px 16px;
+  border-radius: 8px;
+}
+
+    .dice {
+      font-size: 200px;
+      margin: 20px 0;
+      transition: transform 0.2s ease-in-out;
+    }
+
+    .rolling {
+      animation: roll 1s ease-in-out;
+    }
+
+    @keyframes roll {
+      0%   { transform: rotate(0deg) scale(1); }
+      25%  { transform: rotate(90deg) scale(1.1); }
+      50%  { transform: rotate(180deg) scale(0.9); }
+      75%  { transform: rotate(270deg) scale(1.1); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+
+    button {
+      font-size: 25px;
+      padding: 15px 25px;
+      cursor: pointer;
+      border-radius: 8px;
+      border: none;
+      background-color: #ff4081;
+      color: white;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #c60055;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Janičky supermega simulace hodu kostkou</h1>
+  <div class="dice" id="dice">🎲</div>
+  <button onclick="rollDice()">Hodit kostkou</button>
+  <p id="result"></p>
+
+  <script>
+    const dice = document.getElementById("dice");
+    const result = document.getElementById("result");
+    const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+
+    function rollDice() {
+  const audio = new Audio("zvuk.wav");
+  audio.play(); // spustí zvuk při kliknutí
+
+  let interval;
+  let counter = 0;
+
+  dice.classList.add("rolling");
+  result.textContent = "";
+
+  interval = setInterval(() => {
+    const tempRoll = Math.floor(Math.random() * 6);
+    dice.textContent = diceFaces[tempRoll];
+    counter++;
+  }, 250);
+
+  setTimeout(() => {
+    clearInterval(interval);
+    dice.classList.remove("rolling");
+    const finalRoll = Math.floor(Math.random() * 6);
+    dice.textContent = diceFaces[finalRoll];
+    result.textContent = `Padlo číslo: ${finalRoll + 1}`;
+  }, 2850);
+}
+  </script>
+
+</body>
+</html>
