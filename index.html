@@ -90,7 +90,7 @@
 
   <h1>Janičky supermega simulace hodu kostkou</h1>
   <div class="dice" id="dice">🎲</div>
-  <button onclick="rollDice()">Hodit kostkou</button>
+  <button id="rollBtn" onclick="rollDice()">Hodit kostkou</button>
   <p id="result"></p>
 
   <div id="stats" style="
@@ -128,9 +128,15 @@ function updateStatsDisplay() {
 
 updateStatsDisplay(); // zobrazí po načtení
 
-    function rollDice() {
-  const audio = new Audio("zvuk.wav");
-  audio.play(); // spustí zvuk při kliknutí
+   function rollDice() {
+  // deaktivujeme tlačítko
+  const button = document.getElementById("rollBtn");
+  button.disabled = true;
+  button.style.opacity = 0.5;
+  button.textContent = "Hážu...";
+
+  const audio = new Audio("dice-roll.wav");
+  audio.play();
 
   let interval;
   let counter = 0;
@@ -142,24 +148,30 @@ updateStatsDisplay(); // zobrazí po načtení
     const tempRoll = Math.floor(Math.random() * 6);
     dice.textContent = diceFaces[tempRoll];
     counter++;
-  }, 250);
+  }, 100);
 
   setTimeout(() => {
-  clearInterval(interval);
-  dice.classList.remove("rolling");
+    clearInterval(interval);
+    dice.classList.remove("rolling");
 
-  const finalRoll = Math.floor(Math.random() * 6);
-  dice.textContent = diceFaces[finalRoll];
-  result.textContent = `Padlo číslo: ${finalRoll + 1}`;
+    const finalRoll = Math.floor(Math.random() * 6);
+    dice.textContent = diceFaces[finalRoll];
+    result.textContent = `Padlo číslo: ${finalRoll + 1}`;
 
-  // ✅ Aktualizace statistik
-  totalCounts[finalRoll]++;
-  sessionCounts[finalRoll]++;
-  localStorage.setItem("diceStats", JSON.stringify(totalCounts));
-  updateStatsDisplay();
+    // 📊 statistika
+    totalCounts[finalRoll]++;
+    sessionCounts[finalRoll]++;
+    localStorage.setItem("diceStats", JSON.stringify(totalCounts));
+    updateStatsDisplay();
 
-}, 2850);
+    // znovu aktivujeme tlačítko
+    button.disabled = false;
+    button.style.opacity = 1;
+    button.textContent = "Hodit kostkou";
+
+  }, 2850);
 }
+
   </script>
 
 </body>
