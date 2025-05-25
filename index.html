@@ -93,10 +93,40 @@
   <button onclick="rollDice()">Hodit kostkou</button>
   <p id="result"></p>
 
+  <div id="stats" style="
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  padding: 16px 20px;
+  border-radius: 12px;
+  font-size: 18px;
+  line-height: 1.6;
+  font-family: sans-serif;
+  z-index: 2;
+">
+  📊 <strong>Statistika</strong><br>
+  <div id="totalStats">Celkem: ⚀: 0 ⚁: 0 ⚂: 0 ⚃: 0 ⚄: 0 ⚅: 0</div>
+  <div id="sessionStats">Session: ⚀: 0 ⚁: 0 ⚂: 0 ⚃: 0 ⚄: 0 ⚅: 0</div>
+</div>
+
   <script>
     const dice = document.getElementById("dice");
     const result = document.getElementById("result");
     const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+
+    let totalCounts = JSON.parse(localStorage.getItem("diceStats")) || [0, 0, 0, 0, 0, 0];
+    let sessionCounts = [0, 0, 0, 0, 0, 0];
+
+function updateStatsDisplay() {
+  const total = totalCounts.map((count, i) => `${diceFaces[i]}: ${count}`).join(" ");
+  const session = sessionCounts.map((count, i) => `${diceFaces[i]}: ${count}`).join(" ");
+  document.getElementById("totalStats").textContent = `Celkem: ${total}`;
+  document.getElementById("sessionStats").textContent = `Tutu hru: ${session}`;
+}
+
+updateStatsDisplay(); // zobrazí po načtení
 
     function rollDice() {
   const audio = new Audio("zvuk.wav");
@@ -115,12 +145,20 @@
   }, 250);
 
   setTimeout(() => {
-    clearInterval(interval);
-    dice.classList.remove("rolling");
-    const finalRoll = Math.floor(Math.random() * 6);
-    dice.textContent = diceFaces[finalRoll];
-    result.textContent = `Padlo číslo: ${finalRoll + 1}`;
-  }, 2850);
+  clearInterval(interval);
+  dice.classList.remove("rolling");
+
+  const finalRoll = Math.floor(Math.random() * 6);
+  dice.textContent = diceFaces[finalRoll];
+  result.textContent = `Padlo číslo: ${finalRoll + 1}`;
+
+  // ✅ Aktualizace statistik
+  totalCounts[finalRoll]++;
+  sessionCounts[finalRoll]++;
+  localStorage.setItem("diceStats", JSON.stringify(totalCounts));
+  updateStatsDisplay();
+
+}, 2850);
 }
   </script>
 
